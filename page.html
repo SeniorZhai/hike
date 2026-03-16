@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成都周边徒步线路库</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #071018;
+    --bg2: #101d2d;
+    --surface: rgba(16, 25, 39, 0.82);
+    --surface2: #18273a;
+    --surface3: #22354d;
+    --border: rgba(124, 151, 181, 0.26);
+    --border-strong: rgba(124, 151, 181, 0.4);
+    --text: #eaf2ff;
+    --text-dim: #9db0c6;
+    --accent: #ffb347;
+    --accent2: #66b3ff;
+    --green: #3fb950;
+    --red: #f87171;
+    --orange: #d29922;
+    --purple: #b794f6;
+    --teal: #35d7c4;
+    --medal: #f0b54a;
+    --shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(circle at 18% -12%, rgba(102, 179, 255, 0.22), transparent 36%),
+      radial-gradient(circle at 85% 6%, rgba(255, 179, 71, 0.18), transparent 34%),
+      linear-gradient(170deg, var(--bg), var(--bg2) 52%, #0a1320);
+    color: var(--text);
+    font-family: 'Noto Serif SC', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  body::before {
+    top: -140px;
+    right: -120px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(102, 179, 255, 0.12), transparent 68%);
+  }
+
+  body::after {
+    bottom: -180px;
+    left: -150px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255, 179, 71, 0.1), transparent 70%);
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(9, 15, 25, 0.95), rgba(9, 15, 25, 0.84));
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+    padding: 14px clamp(14px, 2.2vw, 28px);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  }
+
+  .title-block h1 {
+    font-size: clamp(19px, 2.1vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #ffd89a;
+    text-shadow: 0 0 24px rgba(255, 179, 71, 0.2);
+  }
+
+  .title-block p {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    margin-top: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    background: rgba(20, 34, 52, 0.55);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .search-box {
+    position: relative;
+  }
+
+  .search-box input {
+    background: rgba(13, 22, 34, 0.82);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px 8px 34px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Noto Serif SC', serif;
+    width: 240px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-box input::placeholder {
+    color: #8ea2b8;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(102, 179, 255, 0.16);
+  }
+
+  .search-box::before {
+    content: '⌕';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(13, 22, 34, 0.6);
+    padding: 6px 8px;
+  }
+
+  .filter-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    white-space: nowrap;
+    letter-spacing: 0.08em;
+  }
+
+  select {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 1px 2px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    min-width: 64px;
+  }
+
+  select:focus {
+    outline: none;
+  }
+
+  .btn-toggle {
+    background: rgba(13, 22, 34, 0.66);
+    border: 1px solid var(--border);
+    color: #c7d7eb;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-toggle:hover,
+  .btn-toggle.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255, 179, 71, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .stats-bar {
+    padding: 12px clamp(14px, 2.2vw, 28px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .stats-bar > div {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(20, 33, 49, 0.6);
+    backdrop-filter: blur(6px);
+  }
+
+  .stats-bar span {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .main {
+    padding: 18px clamp(12px, 2vw, 28px) 28px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .level-group {
+    margin-bottom: 22px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(22, 34, 50, 0.72), rgba(14, 24, 36, 0.66));
+    box-shadow: var(--shadow);
+    animation: rise-in 0.36s ease both;
+  }
+
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(14, 23, 35, 0.58);
+    transition: background 0.2s;
+  }
+
+  .level-header:hover {
+    background: rgba(25, 40, 60, 0.7);
+  }
+
+  .level-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .level-name {
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .level-count {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .collapse-arrow {
+    color: var(--text-dim);
+    font-size: 12px;
+    transition: transform 0.3s;
+  }
+
+  .level-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
+  .level-group.collapsed .table-wrapper { display: none; }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .table-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(124, 151, 181, 0.34);
+    border-radius: 99px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: color 0.2s;
+    user-select: none;
+  }
+
+  thead th:hover { color: var(--text); }
+  thead th.sorted { color: var(--accent2); }
+  thead th .sort-icon { margin-left: 4px; opacity: 0.5; }
+  thead th.sorted .sort-icon { opacity: 1; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(124, 151, 181, 0.2);
+    transition: background 0.18s ease;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover {
+    background: rgba(102, 179, 255, 0.06);
+  }
+
+  tbody tr.hidden { display: none; }
+
+  td {
+    padding: 11px 14px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .col-name {
+    font-weight: 600;
+    font-size: 13px;
+    max-width: 230px;
+    white-space: normal;
+    line-height: 1.45;
+  }
+
+  .col-location {
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+
+  .col-km {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  .col-climb {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+  }
+
+  .col-drive {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .col-season {
+    font-size: 11px;
+    color: var(--purple);
+  }
+
+  .col-notes {
+    font-size: 11px;
+    color: var(--text-dim);
+    max-width: 300px;
+    white-space: normal;
+    line-height: 1.55;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin: 2px 3px 2px 0;
+    white-space: nowrap;
+  }
+
+  .tag-medal { background: rgba(240, 165, 0, 0.16); color: var(--medal); border: 1px solid rgba(240, 165, 0, 0.34); }
+  .tag-family { background: rgba(63, 185, 80, 0.12); color: var(--green); border: 1px solid rgba(63, 185, 80, 0.3); }
+  .tag-classic { background: rgba(88, 166, 255, 0.14); color: var(--accent2); border: 1px solid rgba(88, 166, 255, 0.32); }
+  .tag-hot { background: rgba(248, 113, 113, 0.14); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.34); }
+  .tag-culture { background: rgba(183, 148, 246, 0.14); color: var(--purple); border: 1px solid rgba(183, 148, 246, 0.32); }
+
+  .fav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: rgba(124, 151, 181, 0.55);
+    transition: all 0.2s;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .fav-btn:hover,
+  .fav-btn.active {
+    color: var(--accent);
+    transform: scale(1.2);
+  }
+
+  .no-results {
+    text-align: center;
+    margin-top: 14px;
+    padding: 38px 20px;
+    color: var(--text-dim);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 14px;
+    background: rgba(18, 29, 43, 0.56);
+    display: none;
+  }
+
+  .climb-cell {
+    position: relative;
+  }
+
+  .climb-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.09;
+    pointer-events: none;
+    border-radius: 3px;
+  }
+
+  .l0 { --lc: #52d68a; }
+  .l1 { --lc: #3fb950; }
+  .l2 { --lc: #58a6ff; }
+  .l3 { --lc: #d29922; }
+  .l4 { --lc: #f0a500; }
+  .l5 { --lc: #f78166; }
+  .l6 { --lc: #f85149; }
+  .l7 { --lc: #ff7b72; }
+  .l8 { --lc: #da3633; }
+  .l9 { --lc: #bc8cff; }
+  .l10 { --lc: #e040fb; }
+
+  @media (max-width: 1100px) {
+    .title-block {
+      width: 100%;
+    }
+
+    .controls {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .search-box {
+      flex: 1 1 220px;
+      min-width: 180px;
+    }
+
+    .search-box input {
+      width: 100%;
+    }
+
+    .stats-bar {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .stats-bar > div {
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .header {
+      padding: 12px;
+      gap: 12px;
+    }
+
+    .title-block h1 {
+      font-size: 18px;
+    }
+
+    .controls {
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .filter-group {
+      padding: 5px 7px;
+    }
+
+    .btn-toggle {
+      padding: 7px 10px;
+    }
+
+    .main {
+      padding: 12px 10px 22px;
+    }
+
+    .level-group {
+      margin-bottom: 14px;
+      border-radius: 12px;
+    }
+
+    .table-wrapper {
+      padding: 10px;
+      overflow: visible;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    table {
+      min-width: 0;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: grid;
+      gap: 10px;
+    }
+
+    tbody tr {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(11, 20, 31, 0.78);
+      padding: 10px 12px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    tbody tr:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      border-bottom: 1px dashed rgba(124, 151, 181, 0.24);
+      padding: 6px 0;
+      white-space: normal;
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      font-size: 12px;
+    }
+
+    td::before {
+      content: attr(data-label);
+      color: var(--text-dim);
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    td:first-child {
+      grid-template-columns: 1fr;
+      border-bottom: none;
+      padding: 0 0 6px;
+    }
+
+    td:first-child::before {
+      display: none;
+    }
+
+    td:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .fav-btn {
+      font-size: 18px;
+    }
+
+    .col-name {
+      font-size: 14px;
+    }
+
+    .col-notes {
+      max-width: none;
+    }
+
+    .climb-bg {
+      top: 16%;
+      bottom: 16%;
+      border-radius: 999px;
+      opacity: 0.15;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title-block">
+    <h1>🏔 成都周边徒步线路库</h1>
+    <p>CHENGDU HIKING ROUTE DATABASE</p>
+  </div>
+  <div class="controls">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索线路、地区..." oninput="filterRoutes()">
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">难度</span>
+      <select id="levelFilter" onchange="filterRoutes()">
+        <option value="">全部</option>
+        <option value="0.5">0.5星</option>
+        <option value="1">1星</option>
+        <option value="2">2星</option>
+        <option value="3">3星</option>
+        <option value="4">4星</option>
+        <option value="5">5星</option>
+        <option value="6">6星</option>
+        <option value="7">7星</option>
+        <option value="8">8星</option>
+        <option value="9">9星</option>
+        <option value="10">10星</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">标签</span>
+      <select id="tagFilter" onchange="filterRoutes()">
+        <option value="">全部</option>
+        <option value="medal">🥇 有奖牌</option>
+        <option value="family">👶 亲子</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">月份</span>
+      <select id="monthFilter" onchange="filterRoutes()">
+        <option value="">全部</option>
+        <option value="1">1月</option>
+        <option value="2">2月</option>
+        <option value="3">3月</option>
+        <option value="4">4月</option>
+        <option value="5">5月</option>
+        <option value="6">6月</option>
+        <option value="7">7月</option>
+        <option value="8">8月</option>
+        <option value="9">9月</option>
+        <option value="10">10月</option>
+        <option value="11">11月</option>
+        <option value="12">12月</option>
+      </select>
+    </div>
+    <button class="btn-toggle" id="favBtn" onclick="toggleFavFilter()">☆ 收藏</button>
+    <button class="btn-toggle" onclick="expandAll()">展开全部</button>
+    <button class="btn-toggle" onclick="collapseAll()">收起全部</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item">共 <span id="totalCount">0</span> 条线路</div>
+  <div class="stat-item">显示 <span id="visibleCount">0</span> 条</div>
+  <div class="stat-item">收藏 <span id="favCount">0</span> 条</div>
+</div>
+
+<div class="main" id="mainContent"></div>
+<div class="no-results" id="noResults">暂无符合条件的线路</div>
+
+<script>
+const RAW = [
+  {level:"0.5",area:"眉山",name:"彭祖山",km:5.0,climb:200,drive:0.8,months:"四季",notes:"养生祈福/南门极近/坡度缓",medal:true,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"龙泉驿",name:"紫霞山(龙泉山)",km:8.0,climb:200,drive:0.6,months:"四季",notes:"南门后花园/步道完善/人少舒适",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"天府新区",name:"三星观景台",km:5.0,climb:250,drive:0.3,months:"3-4月",notes:"3月油菜花海/离南门最近",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"双流",name:"佘家大塘",km:6.0,climb:200,drive:0.4,months:"四季",notes:"杉树林/滑沙/南门半小时",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"龙泉驿",name:"百工堰环湖",km:4.5,climb:50,drive:0.5,months:"3-5月",notes:"划船/烧烤/全平路",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"龙泉驿",name:"丹景台",km:5.0,climb:200,drive:0.5,months:"四季",notes:"城市之眼/塑胶栈道/推车友好",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"仁寿",name:"蜂蜜山",km:3.0,climb:100,drive:1.0,months:"2-3月",notes:"2月看樱桃花/全水泥路",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"彭州",name:"丹景山佛兴寺",km:4.0,climb:150,drive:1.2,months:"3-4月",notes:"3月赏樱、玉兰/木栈道",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"0.5",area:"龙泉驿",name:"凉风垭",km:4.0,climb:120,drive:0.5,months:"3-5月",notes:"挖野葱/森林氧吧",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"龙泉驿",name:"金龙长城",km:4.0,climb:450,drive:0.6,months:"四季",notes:"官方登山赛/健身台阶/带娃挑战",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"乐山",name:"四溪沟",km:6.0,climb:250,drive:2.2,months:"5-9月",notes:"溶洞溪流/避暑胜地/奖牌常客",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"彭州",name:"葛仙山",km:9.7,climb:611,drive:1.5,months:"3-4/11月",notes:"喀斯特地貌/溶洞探险/秋赏银杏",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"绵阳",name:"九龙山",km:8.0,climb:300,drive:1.8,months:"四季",notes:"登山公开赛/滑草场/亲子推荐",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"什邡",name:"神瀑沟",km:5.0,climb:200,drive:1.8,months:"四季",notes:"金属完赛牌/瀑布群/亲子",medal:true,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"邛崃",name:"天台山后山",km:7.5,climb:400,drive:1.8,months:"5-7月",notes:"萤火虫季/溪流徒步/配套成熟",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"彭州",name:"宝山(回龙沟/太阳湾)",km:7.5,climb:350,drive:1.8,months:"四季",notes:"猴群/飞瀑/夏季避暑/温泉",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"芦山",name:"背峰山",km:7.0,climb:400,drive:2.2,months:"四季",notes:"森林覆盖高/小众吸氧",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"丹棱",name:"老峨山",km:6.0,climb:450,drive:1.5,months:"四季",notes:"眉山小峨眉/步道友好",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"眉山",name:"中岩寺",km:6.0,climb:200,drive:1.5,months:"四季",notes:"东坡遗迹/摩崖造像/溯溪",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"雅安",name:"蒙顶山",km:8.0,climb:300,drive:1.5,months:"3-10月",notes:"紫气东来旋钮奖牌",medal:true,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"雅安",name:"东拉山大峡谷",km:14.0,climb:300,drive:3.5,months:"10-11月",notes:"十二星座旋转奖牌/红叶",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"龙泉驿",name:"钟家山-百工堰环线",km:11.2,climb:450,drive:0.5,months:"四季",notes:"成都练腿首选/视野极佳",medal:false,family:false,hot:false,classic:true,culture:false},
+  {level:"1",area:"龙泉驿",name:"钟家山",km:9.2,climb:370,drive:0.5,months:"四季",notes:"看成都夜景/视野极佳/南门半小时",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"龙泉驿",name:"仰天窝健身步道",km:5.0,climb:350,drive:0.6,months:"四季",notes:"地铁直达/配套成熟",medal:false,family:false,hot:true,classic:false,culture:false},
+  {level:"1",area:"大邑",name:"丁木沟",km:5.8,climb:600,drive:1.5,months:"6-8月",notes:"森林氧吧/夏季避暑/水质清澈",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"邛崃",name:"纸坊沟",km:13.4,climb:354,drive:1.5,months:"四季",notes:"竹海景观/路平好走/适合大娃",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"大邑",name:"药师岩环线",km:10.0,climb:494,drive:1.5,months:"四季",notes:"摩崖石刻/森林穿越/人文景观",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"1",area:"汶川",name:"卧龙甘海子",km:7.4,climb:515,drive:2.5,months:"5-10月",notes:"官方完赛奖牌/高山草甸",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"理县",name:"厄尔娜沟",km:7.0,climb:405,drive:3.0,months:"10-11月",notes:"原始森林/小众静谧/红叶",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"彭州",name:"中坝森林大环线",km:8.6,climb:407,drive:1.5,months:"四季",notes:"暮光之城同款/常年出片",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"汶川",name:"巴朗山穿邓生沟",km:8.5,climb:193,drive:3.0,months:"5-9月",notes:"高海拔新手线/坡度极缓",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"崇州",name:"琉璃坝",km:9.0,climb:466,drive:1.5,months:"11月",notes:"11月银杏圣地/森林徒步",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"大邑",name:"龙窝子往返",km:8.1,climb:557,drive:1.5,months:"6-8月",notes:"夏季玩水溯溪/捞螃蟹",medal:false,family:true,hot:false,classic:false,culture:false},
+  {level:"1",area:"都江堰",name:"蒲虹路穿越",km:10.1,climb:341,drive:1.2,months:"四季",notes:"铺装路面/新手友好",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"金堂",name:"云顶山",km:9.2,climb:266,drive:1.2,months:"11月",notes:"历史文化/古建筑/看银杏",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"1",area:"金堂",name:"龚家山",km:9.0,climb:169,drive:1.0,months:"四季",notes:"看日出日落热门/玻璃栈道",medal:false,family:false,hot:true,classic:false,culture:false},
+  {level:"1",area:"大邑",name:"雾中山开化寺",km:6.5,climb:350,drive:1.5,months:"四季",notes:"失落的圆明园/古树参天",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"1",area:"金堂",name:"老牛坡",km:9.0,climb:300,drive:1.0,months:"四季",notes:"山脊步道/视野开阔/越野跑",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"都江堰",name:"上元古道",km:8.8,climb:300,drive:1.3,months:"四季",notes:"千年古道/参天古杉",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"1",area:"理县",name:"二古溪",km:4.6,climb:381,drive:3.0,months:"5-11月",notes:"云海观景台/轻露营/看雪山",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"大邑",name:"白岩寺",km:4.5,climb:350,drive:1.5,months:"11月",notes:"千年银杏/古建筑",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"1",area:"彭州",name:"石牛角",km:8.0,climb:407,drive:1.5,months:"四季",notes:"奇石景观/森林覆盖高",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"1",area:"汶川",name:"老鸦山",km:4.3,climb:350,drive:2.5,months:"12-2月",notes:"冬季看雪/无高反",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"什邡",name:"天鹅林场大环线",km:11.9,climb:627,drive:1.6,months:"5-8月",notes:"宫崎骏画风/夏看萤火虫/雾气缭绕",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"汶川",name:"熊猫坪",km:9.2,climb:729,drive:2.5,months:"5-10月",notes:"高山草甸/云海/新手高海拔体验",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"大邑",name:"鹤鸣山",km:8.9,climb:733,drive:1.5,months:"四季",notes:"道教源头/文化徒步/石阶多",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"2",area:"彭州",name:"狮子山大环线",km:11.9,climb:985,drive:1.5,months:"四季",notes:"视野开阔/练腿好去处",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"茂县",name:"浮云牧场白空寺",km:7.1,climb:840,drive:3,months:"",notes:"云海景观",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"汶川",name:"云中岭",km:9,climb:772,drive:2.5,months:"",notes:"360度视野",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"乐山",name:"丁水沟中位瀑布",km:12.7,climb:841,drive:3,months:"",notes:"峡谷瀑布",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"彭州",name:"虹口穿小鱼洞",km:12.1,climb:681,drive:1.5,months:"",notes:"溪流森林穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"泸定",name:"龙华山3000",km:5.7,climb:792,drive:3.5,months:"",notes:"近看贡嘎",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"都江堰",name:"上元古道",km:11.5,climb:705,drive:1.3,months:"",notes:"历史遗迹",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"2",area:"彭州",name:"彭州天台山",km:9.8,climb:880,drive:1.5,months:"",notes:"高覆盖森林",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"大邑",name:"雾中山光明顶",km:8.1,climb:868,drive:1.5,months:"",notes:"佛教名山",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"都江堰",name:"松茂古道",km:9.3,climb:830,drive:1.3,months:"",notes:"文化遗产",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"2",area:"龙泉驿",name:"仰天窝穿石经寺",km:14.3,climb:566,drive:0.6,months:"",notes:"距离较长",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"都江堰",name:"青城前山",km:12.1,climb:555,drive:1.2,months:"",notes:"景区成熟路",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"汶川",name:"西羌大峡谷",km:11,climb:464,drive:2.5,months:"",notes:"峡谷风光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"彭州",name:"法藏寺八步坎",km:11.3,climb:370,drive:1.5,months:"",notes:"石阶路",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"昭觉县",name:"悬崖村",km:5,climb:850,drive:6,months:"",notes:"意志挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"都江堰",name:"铜马沟",km:13.6,climb:802,drive:1.3,months:"四季",notes:"幽静小众/森林茂密",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"理县",name:"纳山3800",km:8.3,climb:920,drive:3.0,months:"5-10月",notes:"初级高海拔/视野开阔",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"崇州",name:"金凤山大环线",km:13.1,climb:770,drive:1.5,months:"四季",notes:"植被丰富/洗肺圣地",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"都江堰",name:"青城后山环线",km:22.0,climb:1100,drive:1.2,months:"四季",notes:"经典路线/水景极佳",medal:true,family:false,hot:false,classic:true,culture:false},
+  {level:"2",area:"汶川",name:"望乡台",km:10.2,climb:1072,drive:2.2,months:"四季",notes:"强度进阶/爬升练习/视野好",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"泸定",name:"红岩顶",km:8.8,climb:968,drive:3.5,months:"10-2月",notes:"360度看贡嘎/云海日出",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"大邑",name:"千佛山环线",km:13.5,climb:837,drive:1.5,months:"四季",notes:"森林环线/龙门山深处",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"崇州",name:"都统岩",km:10.2,climb:924,drive:1.5,months:"四季",notes:"可观雪山/日照金山",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"巴中",name:"光雾山",km:12.0,climb:600,drive:4.5,months:"10-11月",notes:"亚洲最美红叶区/摄影天堂",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"大邑",name:"西岭雪山",km:10.0,climb:800,drive:2.0,months:"12-2月",notes:"冬季滑雪/云海/配套最全",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"达州",name:"巴山大峡谷",km:15.0,climb:700,drive:5.5,months:"四季",notes:"喀斯特岩溶地貌/大峡谷风光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"广元",name:"剑门关",km:12.0,climb:900,drive:3.0,months:"四季",notes:"蜀道难/鸟道/猿猱道/体力挑战",medal:false,family:false,hot:false,classic:false,culture:true},
+  {level:"2",area:"青川",name:"唐家河",km:10.0,climb:500,drive:3.5,months:"10-11月",notes:"野生动物天堂/偶遇扭角羚/红叶",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"2",area:"峨眉山",name:"峨眉山(低线)",km:15.0,climb:800,drive:2.5,months:"四季",notes:"佛教名山/猴区/台阶路",medal:true,family:false,hot:false,classic:false,culture:true},
+  {level:"3",area:"都江堰",name:"赵公山东线",km:7.8,climb:1315,drive:1.2,months:"四季",notes:"成都练驴考场/坡度陡",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"乐山",name:"大瓦山",km:11.6,climb:1377,drive:3.5,months:"5-10月",notes:"桌山奇观/强度极大",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"茂县",name:"九顶山环线",km:16.1,climb:940,drive:3.0,months:"6-7月",notes:"花海季/十里花海/星空",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"巴朗山4688",km:8.1,climb:963,drive:3.0,months:"5-10月",notes:"进阶首选/第一座高海拔",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"泸定",name:"华尖山",km:12.2,climb:1078,drive:3.5,months:"10-2月",notes:"360度雪山观景/云海日出",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"大邑",name:"龙窝子大环线",km:15.5,climb:840,drive:1.5,months:"6-8月",notes:"高强度玩水/大飞水穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"熊猫之眼",km:7.8,climb:734,drive:2.5,months:"四季",notes:"趣味探洞/视野开阔",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"拉拉虎",km:10.7,climb:1256,drive:2.5,months:"四季",notes:"坡陡练腿/山脊线视野",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汉源",name:"泥巴山大相岭",km:13.6,climb:1195,drive:3.5,months:"四季",notes:"古道穿越/植被丰富",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"小金",name:"大二普三海子",km:11.2,climb:107,drive:4.5,months:"6-10月",notes:"高原湖泊群/景色绝美",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"布拖县",name:"阿布泽鲁",km:15.7,climb:850,drive:7,months:"",notes:"原始山野",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"理县",name:"小马场",km:10.5,climb:1304,drive:3,months:"",notes:"坡陡练腿",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"泸定",name:"上野马海子",km:9.8,climb:681,drive:3.5,months:"",notes:"秘境湖泊",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"海尔必",km:7.5,climb:669,drive:2.5,months:"",notes:"视野极佳",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"阿尔沟",km:10.6,climb:1099,drive:3.0,months:"10-11月",notes:"原始森林/红叶溪谷/景色绝美",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"阿嘟雕",km:7.38,climb:1222,drive:2.5,months:"",notes:"坡度大",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"邛崃",name:"南宝山连天峰",km:9.2,climb:1175,drive:1.8,months:"",notes:"原始风光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"汶川",name:"云上花林",km:9.8,climb:984,drive:2.5,months:"",notes:"风景优美",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"绵阳",name:"绵阳千佛山",km:12.9,climb:980,drive:2.5,months:"",notes:"云海佛光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"都江堰",name:"云华山大环线",km:14.7,climb:1039,drive:1.3,months:"",notes:"环线挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"3",area:"洪雅",name:"瓦屋山",km:12.0,climb:700,drive:3.0,months:"12-2/6-7月",notes:"双层桌山/冬季雪国/夏季避暑杜鹃",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"彭州",name:"铁瓦殿",km:15.8,climb:2097,drive:1.8,months:"四季",notes:"爬升之王/极致拉练",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"彭州",name:"九峰山",km:14.4,climb:1910,drive:1.8,months:"四季",notes:"云海星空/人气极高",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"甲尔猛措",km:17.5,climb:1756,drive:3.0,months:"10-11月",notes:"红叶海子/资深驴友必去/强度大",medal:true,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"汶川",name:"巴朗山5072",km:7.5,climb:1257,drive:3.0,months:"5-10月",notes:"入门雪山攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"康定",name:"白海子",km:13.9,climb:1289,drive:4.0,months:"6-10月",notes:"高山湖泊/景色极度震撼",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"胆扎木左峰",km:18.6,climb:1595,drive:3.5,months:"四季",notes:"资深线路/强度大",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"黑水",name:"奥太娜",km:11.0,climb:1100,drive:4.5,months:"四季",notes:"初级雪山攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"峨眉山",name:"万佛顶穿越",km:21.5,climb:1368,drive:2.5,months:"四季",notes:"后山秘境/强度进阶",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"赵公山ABBA",km:12.4,climb:2023,drive:1.3,months:"",notes:"顶级拉练",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"纳山4485",km:17.7,climb:1595,drive:3,months:"",notes:"高海拔挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"大马场牧场",km:16.9,climb:1568,drive:3,months:"",notes:"牧场风光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"小金",name:"结斯沟穿山洞",km:8.8,climb:1116,drive:4.5,months:"",notes:"秘境探索",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"九子屯笔架山",km:17.8,climb:1411,drive:3,months:"",notes:"视野开阔",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"汶川",name:"石召垭口",km:13.7,climb:1794,drive:2.5,months:"",notes:"坡度陡峭",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"小丘地牧场",km:14.6,climb:1624,drive:3,months:"",notes:"景色绝美",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"汶川",name:"鸡公梁子",km:16.2,climb:1760,drive:2.5,months:"",notes:"体能考验",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"汶川",name:"什达格",km:17.4,climb:1109,drive:2.5,months:"",notes:"原始路况",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"乐山",name:"丁木沟高位线",km:20.1,climb:1180,drive:3,months:"",notes:"强度极大",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"猛古雪山4235",km:14.5,climb:1530,drive:3,months:"",notes:"登山挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"理县",name:"错青美洛",km:14.3,climb:800,drive:3,months:"",notes:"景色秀丽",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"4",area:"峨眉山",name:"马合顺穿万佛顶",km:21.5,climb:1368,drive:2.5,months:"",notes:"后山秘境",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"康定",name:"勒多单日速穿",km:37.0,climb:1055,drive:4.0,months:"6-9月",notes:"耐力挑战/极长距离",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"老君沟大海子",km:29.0,climb:2000,drive:3.5,months:"6-10月",notes:"长距离穿越/原始秘境",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"梦笔山",km:25.4,climb:1346,drive:4.5,months:"",notes:"景色壮美",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"玉匹沟长海子",km:24.5,climb:1808,drive:3,months:"",notes:"原始冰川湖",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"族那峰",km:11.8,climb:1970,drive:3.0,months:"四季",notes:"技术攀爬/进阶线路",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"都江堰",name:"火烧杠",km:11.1,climb:1810,drive:1.5,months:"四季",notes:"极度陡峭/练腿神线",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"后海子",km:24.4,climb:2047,drive:3.5,months:"",notes:"荒野行者",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"大峰(非雪季)",km:29.2,climb:1941,drive:4.5,months:"5-10月",notes:"初级雪山/官方证书",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"大玛雅",km:9.7,climb:1702,drive:3,months:"",notes:"快速攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"依央嘉波",km:15.1,climb:1366,drive:4.5,months:"",notes:"原始景观",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"泸定",name:"加米峰4520",km:26.5,climb:1927,drive:3.5,months:"",notes:"雪山挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"希尔基斯朵",km:24.0,climb:1800,drive:3.0,months:"6-9月",notes:"景色震撼/海子群",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"汶川",name:"幸福山4450",km:21.0,climb:2300,drive:2.5,months:"",notes:"登山进阶",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"康定",name:"康定冰海子",km:17.4,climb:1856,drive:4,months:"",notes:"震撼冰湖",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"长穿毕单日速穿",km:29.0,climb:1230,drive:3.5,months:"",notes:"经典穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"峨眉山",name:"大沟旁穿万佛顶",km:18.1,climb:2350,drive:2.5,months:"",notes:"顶级拉练",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"九架海",km:20.8,climb:1472,drive:4.5,months:"",notes:"海子群",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"茂县",name:"九顶后山",km:25.6,climb:2360,drive:3.0,months:"6月",notes:"杜鹃花海/视野巅峰",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"理县",name:"尽头峰",km:11.1,climb:1360,drive:3,months:"",notes:"技术挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"彭州",name:"火焰峰",km:17.7,climb:2175,drive:1.8,months:"四季",notes:"岩石攀爬多/身手考验",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"松潘",name:"阿尼玛东淘金沟",km:20.3,climb:900,drive:4.5,months:"",notes:"原始穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"汶川",name:"天鹅抱蛋环线",km:17.0,climb:1760,drive:2.5,months:"",notes:"趣味挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"泸定",name:"龙华山4155",km:18.3,climb:1938,drive:3.5,months:"",notes:"核心观景",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"五人间",km:15.9,climb:1589,drive:4.5,months:"",notes:"景色迷人",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"小金",name:"迪斯穆斯科",km:13.1,climb:1483,drive:4.5,months:"",notes:"技术登山",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"汶川",name:"大板召",km:16.4,climb:2165,drive:2.5,months:"",notes:"资深挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"泸定",name:"田海子4978",km:17.0,climb:944,drive:3.5,months:"",notes:"雪山攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"冕宁",name:"饿而则饿反穿",km:24.0,climb:1670,drive:5.5,months:"",notes:"秘境海子",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"5",area:"汶川",name:"巴夺沟环线",km:20.2,climb:2140,drive:2.5,months:"",notes:"环线挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"茂县",name:"狮子王",km:27.7,climb:2324,drive:3.0,months:"6-9月",notes:"荒野顶级/雪山环绕",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"茂县",name:"太子城",km:29.0,climb:2047,drive:3.0,months:"6-9月",notes:"威严神山/碎石坡",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"小乘山",km:16.2,climb:2586,drive:3.0,months:"四季",notes:"极其陡峭/资深推荐",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"泸定",name:"二层山",km:33.6,climb:2600,drive:3.5,months:"",notes:"长距高爬升",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"汶川",name:"磨刀石三峰",km:20.8,climb:2742,drive:2.5,months:"",notes:"资深线路",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"老君沟新海子",km:31.5,climb:2412,drive:3.5,months:"",notes:"深度穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"康定",name:"雅拉温泉反穿",km:45.0,climb:1350,drive:4.0,months:"四季",notes:"极致耐力/风景绝佳",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"红砂梁子垭口",km:20.8,climb:2270,drive:3,months:"",notes:"景色震撼",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"热嘎斗峰",km:23.5,climb:2665,drive:3,months:"",notes:"攀登挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"小金",name:"鹰鸽嘴峰",km:29.3,climb:2096,drive:4.5,months:"",notes:"雪山攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"彭州",name:"三口锅",km:23.3,climb:2772,drive:1.8,months:"四季",notes:"碎石坡极虐/意志磨炼",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"纳山4817峰",km:27.0,climb:2417,drive:3,months:"",notes:"高海拔攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"汶川",name:"幸福山刀锋",km:26.0,climb:2650,drive:2.5,months:"",notes:"惊险刺激",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"彭州",name:"朱雀峰",km:21.9,climb:2813,drive:1.8,months:"",notes:"资深玩家",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"九龙",name:"江官山",km:18.2,climb:2656,drive:6.5,months:"",notes:"秘境探索",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"理县",name:"魔戒峰",km:12.3,climb:1796,drive:3,months:"",notes:"独特风光",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"汶川",name:"嘛咪堆堆",km:21.3,climb:2582,drive:2.5,months:"",notes:"极限挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"康定",name:"扬扬拉措",km:26.6,climb:2400,drive:4,months:"",notes:"绝美海子",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"汶川",name:"盘龙山",km:26.2,climb:2857,drive:2.5,months:"四季",notes:"强度极大/视野极佳",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"6",area:"彭州",name:"马鬃岭",km:14.3,climb:2116,drive:1.8,months:"",notes:"极致陡峭",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"理县",name:"玉匹沟未央峰",km:25.7,climb:2542,drive:3,months:"",notes:"登山极限",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"松潘",name:"七藏沟速穿",km:53.5,climb:2060,drive:5,months:"",notes:"越野速穿",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"康定",name:"子龙秘境速穿",km:44.0,climb:2035,drive:4.5,months:"",notes:"极度荒野",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"泸定",name:"中山峰冰塔林",km:25.3,climb:3065,drive:3.5,months:"",notes:"冰川震撼",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"理县",name:"大乘山",km:18.3,climb:2650,drive:3,months:"",notes:"资深挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"小金",name:"汗牛斯古拉",km:35.0,climb:2979,drive:5,months:"",notes:"极其艰巨",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"理县",name:"鱼海子小笼包",km:29.3,climb:2473,drive:3,months:"",notes:"长距离虐线",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"彭州",name:"三口锅连登",km:23.7,climb:2975,drive:1.8,months:"",notes:"极致拉练",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"茂县",name:"狮太连登",km:50.0,climb:3850,drive:3,months:"",notes:"重装挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"彭州",name:"赵九铁单日",km:38.0,climb:5322,drive:1.5,months:"",notes:"神级单日",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"7",area:"理县",name:"九龙池穿尔乌熟",km:30.0,climb:3100,drive:3,months:"",notes:"无人区穿越",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"8",area:"茂县",name:"南天门",km:33.4,climb:2647,drive:3,months:"",notes:"荒野之魂",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"8",area:"理县",name:"尔尔若斯多",km:29.9,climb:2645,drive:3,months:"",notes:"极度偏远",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"8",area:"理县",name:"玛雅远路",km:19.5,climb:2407,drive:3,months:"",notes:"极其陡峭",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"8",area:"峨眉山",name:"峨眉山100K",km:100.0,climb:4650,drive:2.5,months:"",notes:"意志终点",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"8",area:"彭州",name:"青龙峰",km:20.3,climb:2866,drive:1.8,months:"",notes:"死亡坡度",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"彭州",name:"白虎峰多日",km:52.0,climb:4370,drive:1.8,months:"",notes:"极限重装",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"彭州",name:"南坡太子城",km:48.0,climb:4200,drive:1.8,months:"",notes:"极致荒野",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"彭州",name:"元武峰多日",km:29.0,climb:4950,drive:1.8,months:"",notes:"高海拔重装",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"汶川",name:"光光山多日",km:28.0,climb:3000,drive:2.5,months:"",notes:"复杂地形",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"汶川",name:"幸福大板召",km:51.1,climb:6260,drive:2.5,months:"",notes:"全能挑战",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"理县",name:"雪龙岭",km:31.2,climb:3820,drive:3,months:"",notes:"登山极限",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"彭州",name:"赵九铁加强版",km:45.7,climb:6354,drive:1.5,months:"",notes:"终极拉练",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"汶川",name:"龙岩峰",km:34.4,climb:4390,drive:2.5,months:"",notes:"顶级攀登",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"9",area:"彭州",name:"油罐顶",km:36.0,climb:2300,drive:1.8,months:"",notes:"原始秘境",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"10",area:"茂县",name:"红照壁",km:35.0,climb:3300,drive:3.5,months:"",notes:"天花板/风险",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"10",area:"茂县",name:"长年峰",km:null,climb:null,drive:null,months:"",notes:"传说线路",medal:false,family:false,hot:false,classic:false,culture:false},
+  {level:"10",area:"茂县",name:"天牙峰",km:null,climb:null,drive:null,months:"",notes:"极度危险",medal:false,family:false,hot:false,classic:false,culture:false},
+];
+
+const LEVEL_META = {
+  "0.5": {label:"0.5星 入门",cls:"l0",color:"#52d68a",desc:"超轻松，适合老幼"},
+  "1":   {label:"1星 简单",cls:"l1",color:"#3fb950",desc:"适合徒步新手"},
+  "2":   {label:"2星 进阶",cls:"l2",color:"#58a6ff",desc:"有一定体力要求"},
+  "3":   {label:"3星 中等",cls:"l3",color:"#d29922",desc:"需要良好体能"},
+  "4":   {label:"4星 困难",cls:"l4",color:"#f0a500",desc:"资深驴友推荐"},
+  "5":   {label:"5星 挑战",cls:"l5",color:"#f78166",desc:"强度较大"},
+  "6":   {label:"6星 极难",cls:"l6",color:"#f85149",desc:"顶级线路"},
+  "7":   {label:"7星 极限",cls:"l7",color:"#ff7b72",desc:"极限体能"},
+  "8":   {label:"8星 史诗",cls:"l8",color:"#da3633",desc:"精英玩家"},
+  "9":   {label:"9星 神级",cls:"l9",color:"#bc8cff",desc:"神级体能"},
+  "10":  {label:"10星 传说",cls:"l10",color:"#e040fb",desc:"传说线路"},
+};
+
+let favorites = JSON.parse(localStorage.getItem('hikeFavs') || '[]');
+let showFavOnly = false;
+let sortCol = null;
+let sortDir = 1;
+let allRows = [];
+
+function getLevelClass(l) {
+  const n = parseFloat(l);
+  if(n<1) return 'l0';
+  if(n<2) return 'l1';
+  if(n<3) return 'l2';
+  if(n<4) return 'l3';
+  if(n<5) return 'l4';
+  if(n<6) return 'l5';
+  if(n<7) return 'l6';
+  if(n<8) return 'l7';
+  if(n<9) return 'l8';
+  if(n<10) return 'l9';
+  return 'l10';
+}
+
+function getDiffColor(l) {
+  const n = parseFloat(l);
+  const ratio = Math.min(n/10,1);
+  const colors = ['#52d68a','#3fb950','#58a6ff','#d29922','#f0a500','#f78166','#f85149','#ff7b72','#da3633','#bc8cff','#e040fb'];
+  const idx = Math.min(Math.floor(n), colors.length-1);
+  return colors[idx];
+}
+
+function renderTags(r) {
+  let t = '';
+  if(r.medal) t += '<span class="tag tag-medal">🥇奖牌</span>';
+  if(r.family) t += '<span class="tag tag-family">👶亲子</span>';
+  if(r.classic) t += '<span class="tag tag-classic">★经典</span>';
+  if(r.hot) t += '<span class="tag tag-hot">🔥热门</span>';
+  if(r.culture) t += '<span class="tag tag-culture">🏛文化</span>';
+  return t;
+}
+
+function monthInRange(months, target) {
+  if(!months || months==='四季') return true;
+  const parts = months.split('/');
+  for(const part of parts) {
+    const m = part.match(/(\d+)-(\d+)/);
+    if(m) {
+      let s=parseInt(m[1]), e=parseInt(m[2]);
+      if(s<=e && target>=s && target<=e) return true;
+      if(s>e && (target>=s || target<=e)) return true;
+    }
+    const single = part.match(/^(\d+)月?$/);
+    if(single && parseInt(single[1])===target) return true;
+  }
+  return false;
+}
+
+function buildTable() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+  allRows = [];
+
+  const levels = [...new Set(RAW.map(r=>r.level))].sort((a,b)=>parseFloat(a)-parseFloat(b));
+
+  for(const lv of levels) {
+    const meta = LEVEL_META[lv] || {label:`${lv}星`,cls:'l1',color:'#58a6ff'};
+    const routes = RAW.filter(r=>r.level===lv);
+
+    const group = document.createElement('div');
+    group.className = 'level-group';
+    group.dataset.level = lv;
+
+    const clsName = getLevelClass(lv);
+    const color = meta.color;
+
+    group.innerHTML = `
+      <div class="level-header ${clsName}" onclick="toggleGroup(this.parentElement)">
+        <span class="level-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${lv}★</span>
+        <span class="level-name">${meta.label}</span>
+        <span class="level-count" id="cnt_${lv}">${routes.length} 条</span>
+        <span class="collapse-arrow">▼</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:30px"></th>
+              <th onclick="sortTable('area')" class="sortable">属地 <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('name')" class="sortable">线路名称 <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('km')" class="sortable">里程km <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('climb')" class="sortable">爬升m <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('drive')" class="sortable">南门车程h <span class="sort-icon">↕</span></th>
+              <th>推介月份</th>
+              <th>亮点标签</th>
+              <th>特色</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_${lv}">
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    main.appendChild(group);
+
+    // level 可能是 "0.5"，用 querySelector('#id') 会把 "." 当成 class 选择器
+    const tbody = document.getElementById(`tbody_${lv}`);
+    for(const r of routes) {
+      const id = r.level+'_'+r.name;
+      const isFav = favorites.includes(id);
+      const color2 = getDiffColor(lv);
+
+      const tr = document.createElement('tr');
+      tr.dataset.id = id;
+      tr.dataset.area = r.area;
+      tr.dataset.name = r.name;
+      tr.dataset.km = r.km||0;
+      tr.dataset.climb = r.climb||0;
+      tr.dataset.drive = r.drive||0;
+      tr.dataset.months = r.months||'';
+      tr.dataset.medal = r.medal?'1':'0';
+      tr.dataset.family = r.family?'1':'0';
+      tr.dataset.fav = isFav?'1':'0';
+
+      const maxClimb = 6400;
+      const climbPct = r.climb ? Math.min(r.climb/maxClimb*100, 100) : 0;
+
+      tr.innerHTML = `
+        <td data-label="收藏"><button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${id}',this)" title="收藏">★</button></td>
+        <td class="col-location" data-label="属地">${r.area}</td>
+        <td class="col-name" data-label="线路">${r.name}</td>
+        <td class="col-km" data-label="里程">${r.km!=null?r.km+'km':'—'}</td>
+        <td class="col-climb climb-cell" data-label="爬升" style="position:relative">
+          <div class="climb-bg" style="width:${climbPct}%;background:${color2}"></div>
+          <span style="position:relative">${r.climb!=null?r.climb+'m':'—'}</span>
+        </td>
+        <td class="col-drive" data-label="车程">${r.drive!=null?r.drive+'h':'—'}</td>
+        <td class="col-season" data-label="月份">${r.months||'—'}</td>
+        <td data-label="标签">${renderTags(r) || '—'}</td>
+        <td class="col-notes" data-label="特色">${r.notes||''}</td>
+      `;
+      tbody.appendChild(tr);
+      allRows.push({tr, r, lv});
+    }
+  }
+  updateCounts();
+}
+
+function toggleGroup(el) {
+  el.classList.toggle('collapsed');
+}
+
+function expandAll() {
+  document.querySelectorAll('.level-group').forEach(g=>g.classList.remove('collapsed'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.level-group').forEach(g=>g.classList.add('collapsed'));
+}
+
+function filterRoutes() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const lv = document.getElementById('levelFilter').value;
+  const tag = document.getElementById('tagFilter').value;
+  const mo = parseInt(document.getElementById('monthFilter').value)||0;
+
+  for(const {tr, r} of allRows) {
+    let show = true;
+    if(q && !(r.name.toLowerCase().includes(q)||r.area.toLowerCase().includes(q)||r.notes.toLowerCase().includes(q))) show=false;
+    if(lv && r.level!==lv) show=false;
+    if(tag==='medal' && !r.medal) show=false;
+    if(tag==='family' && !r.family) show=false;
+    if(mo && !monthInRange(r.months, mo)) show=false;
+    if(showFavOnly && !favorites.includes(r.level+'_'+r.name)) show=false;
+    tr.classList.toggle('hidden', !show);
+  }
+  updateCounts();
+}
+
+function toggleFav(id, btn) {
+  const idx = favorites.indexOf(id);
+  if(idx===-1) {
+    favorites.push(id);
+    btn.classList.add('active');
+  } else {
+    favorites.splice(idx,1);
+    btn.classList.remove('active');
+  }
+  localStorage.setItem('hikeFavs', JSON.stringify(favorites));
+  // update tr data
+  const tr = document.querySelector(`tr[data-id="${id}"]`);
+  if(tr) tr.dataset.fav = favorites.includes(id)?'1':'0';
+  updateCounts();
+  if(showFavOnly) filterRoutes();
+}
+
+function toggleFavFilter() {
+  showFavOnly = !showFavOnly;
+  document.getElementById('favBtn').classList.toggle('active', showFavOnly);
+  filterRoutes();
+}
+
+function sortTable(col) {
+  if(sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
+  document.querySelectorAll('thead th').forEach(th=>th.classList.remove('sorted'));
+  document.querySelectorAll(`thead th[onclick="sortTable('${col}')"]`).forEach(th=>th.classList.add('sorted'));
+
+  for(const group of document.querySelectorAll('.level-group')) {
+    const tbody = group.querySelector('tbody');
+    if(!tbody) continue;
+    const rows = [...tbody.querySelectorAll('tr')];
+    rows.sort((a,b)=>{
+      let va = a.dataset[col]||'', vb = b.dataset[col]||'';
+      if(['km','climb','drive'].includes(col)) { va=parseFloat(va)||0; vb=parseFloat(vb)||0; }
+      if(va<vb) return -sortDir;
+      if(va>vb) return sortDir;
+      return 0;
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  }
+}
+
+function updateCounts() {
+  const total = allRows.length;
+  const visible = allRows.filter(({tr})=>!tr.classList.contains('hidden')).length;
+  const favs = favorites.length;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('visibleCount').textContent = visible;
+  document.getElementById('favCount').textContent = favs;
+
+  // update per-level counts
+  for(const lv of Object.keys(LEVEL_META)) {
+    const cnt = allRows.filter(({tr,r})=>r.level===lv && !tr.classList.contains('hidden')).length;
+    const el = document.getElementById('cnt_'+lv);
+    if(el) el.textContent = cnt + ' 条';
+  }
+
+  const noRes = document.getElementById('noResults');
+  noRes.style.display = visible===0?'block':'none';
+}
+
+buildTable();
+</script>
+</body>
+</html>
