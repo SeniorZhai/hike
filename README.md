@@ -33,7 +33,7 @@ http://localhost:8080/page.html
 - 代码源：本仓库
 - 构建命令：`echo "No build required"`（或留空）
 - 输出目录：`.`
-- 首页文件：`page.html`
+- 首页文件：`index.html`
 
 ## Git 推送
 
